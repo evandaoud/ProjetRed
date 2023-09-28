@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 	"os/exec"
 	"runtime"
@@ -39,7 +40,7 @@ func SpeedMsg(message string, speed int, colorName string) {
 
 	for _, char := range message {
 		selectedColor.Print(string(char))
-		time.Sleep(time.Duration(speed) * time.Millisecond)
+		time.Sleep(time.Duration(10) * time.Millisecond)
 	}
 }
 
@@ -67,32 +68,77 @@ type Equipment struct {
 
 // /////////////////////////////////////////////////////////////MONSTRE////////////////////////////////////////////////////////////////////////
 type Monstre struct {
-	nom       string
-	pvMax     int
-	pvActuels int
-	attaque   int
+	Name      string
+	MaxHealth int
+	Health    int
+	Attack    int
 }
 
-///////////////////////////////////////////////////////////////////////////Fonction Gobelin///////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////Fonction Gobelin///////////////////////////////////////////////////
+type Character struct {
+	Name      string
+	Health    int
+	MaxHealth int
+	Attack    int
+}
+
+func GoblinPattern(player *Character, goblin *Monstre) {
+	rand.Seed(time.Now().UnixNano())
+
+	// Initialisation des variables
+	playerHealth := player.Health
+	goblinHealth := goblin.Health
+	turnCounter := 0
+
+	// Boucle de combat
+	for playerHealth > 0 && goblinHealth > 0 {
+		turnCounter++
+		if turnCounter%3 == 0 {
+			// Tous les 3 tours, le Gobelin inflige 200% de son attaque en dégâts
+			damage := 2 * goblin.Attack
+			playerHealth -= damage
+		} else {
+			// Sinon, le Gobelin inflige 100% de son attaque en dégâts
+			playerHealth -= goblin.Attack
+		}
+
+		// Affichage des dégâts infligés
+		fmt.Printf("%s inflige à %s %d de dégâts\n", goblin.Name, player.Name, goblin.Attack)
+
+		// Affichage des points de vie actuels du joueur
+		fmt.Printf("Points de vie actuels de %s: %d/%d\n", player.Name, playerHealth, player.MaxHealth)
+	}
+
+	// Vérification du résultat du combat
+	if playerHealth <= 0 {
+		fmt.Printf("%s a été vaincu par le %s.\n", player.Name, goblin.Name)
+	} else {
+		fmt.Printf("%s a vaincu le %s.\n", player.Name, goblin.Name)
+	}
+}
 
 ///////////////////////////////////////////////////////////////////////////////////RACONTER HISTOIRE//////////////////////////////////////
 
 func RaconterHistoire() {
 	ClearConsole()
 
-	SpeedMsg("-------------------------------------------Bienvenue dans le monde de l'aventure--------------------------------------------- !\n", 20, "blue")
-	SpeedMsg("Il y a longtemps, dans un royaume lointain, le maléfique dragon Smaug a volé l'Orbe de la Destinée\n", 20, "red")
-	SpeedMsg("une puissante relique capable de contrôler la magie elle-même. Le royaume est plongé dans les ténèbres\n", 20, "red")
-	SpeedMsg("et le désespoir règne parmi le peuple.\n", 20, "red")
+	SpeedMsg("\t   ____             U _____ u_   _  __     __ U _____ u_   _       _   _U _____ u    \n\tU | __\")u    ___    \\| ___\"|/ \\ |\"| \\ \\   /\"/u\\| ___\"|/ \\ |\"|   U |\"|u| \\| ___\"|/    \n\t \\|  _ \\/   |_\"_|    |  _|\"<|  \\| |> \\ \\ / //  |  _|\"<|  \\| |>   \\| |\\| ||  _|\"      \n\t  | |_) |    | |     | |___U| |\\  |u /\\ V /_,-.| |___U| |\\  |u    | |_| || |___      \n\t  |____/   U/| |\\u   |_____||_| \\_| U  \\_/-(_/ |_____||_| \\_|    <<\\___/ |_____|     \n\t _|| \\_.-,_|___|_,-.<<   >>||   \\,-.//       <<   >>||   \\,-.(__) )(  <<   >>  \n\t(__) (__)\\_)-' '-(_/(__) (__|_\"  (/_/(__)     (__) (__|_\")  (_/     (__)(__) (__)    \n", 10, "cyan")
+	fmt.Println("                                                           -                                                        ")
+	fmt.Println("                                                           -                                                        ")
+	fmt.Println("                                                           -                                                        ")
+	SpeedMsg("----------Il y a longtemps, dans un royaume lointain, le maléfique dragon Smaug a volé l'Orbe de la Destinée----------\n", 20, "green")
+	SpeedMsg("----------une puissante relique capable de contrôler la magie elle-même. Le royaume est plongé dans les ténèbres\n", 20, "green")
+	SpeedMsg("----------et le désespoir règne parmi le peuple.\n", 20, "red")
+	SpeedMsg("\n\t       _______________ ______________________ ________________________ \n\t /  _  \\   \\ /   /\\_   _____/ \\      \\__    ___/    |   \\______   \\_   _____/ \n\t/  /_\\  \\   Y   /  |    __)_  /   |   \\|    |  |    |   /|       _/|    __)_\n\t/    |    \\     /   |        \\/    |    \\    |  |    |  / |    |   \\|        \\ \n\t\\____|__  /\\___/   /_______  /\\____|__  /____|  |______/  |____|_  /_______  / \n\t\\/                 \\/         \\/                         \\/        \\/           ", 10, "cyan")
 	fmt.Println()
-	SpeedMsg("Vous êtes un jeune aventurier courageux, prêt à tout pour sauver votre royaume. Vous avez entendu parler\n", 20, "red")
-	SpeedMsg("d'une prophétie ancienne qui dit que seul un héros digne pourra reprendre l'Orbe de la Destinée et\n", 20, "red")
-	SpeedMsg("défaire Smaug. C'est votre destinée qui vous appelle, et vous partez pour une aventure épique.\n", 20, "red")
+	SpeedMsg("----------Vous êtes un jeune aventurier courageux, prêt à tout pour sauver votre royaume. Vous avez entendu parler----------\n", 20, "green")
+	SpeedMsg("----------d'une prophétie ancienne qui dit que seul un héros digne pourra reprendre l'Orbe de la Destinée et----------\n", 20, "green")
+	SpeedMsg("----------défaire Smaug. C'est votre destinée qui vous appelle, et vous partez pour une aventure épique.----------\n", 20, "green")
 	fmt.Println()
-	SpeedMsg("Votre voyage commence ici. Choisissez avec sagesse votre personnage et préparez-vous à affronter des\n", 20, "red")
-	SpeedMsg("dangers inimaginables. L'avenir du royaume repose entre vos mains.\n", 20, "red")
+	SpeedMsg("----------Votre voyage commence ici. Choisissez avec sagesse votre personnage et préparez-vous à affronter des----------\n", 20, "green")
+	SpeedMsg("----------dangers inimaginables. L'avenir du royaume repose entre vos mains.----------\n", 20, "green")
 	fmt.Println()
-	SpeedMsg("Appuyez sur Entrée pour commencer votre quête...\n", 20, "green")
+	SpeedMsg("-------------------------------( Appuyez sur Entrée pour commencer votre quête...) -------------------------------\n", 20, "blue")
 	fmt.Scanln() // Attendez l'entrée de l'utilisateur pour passer au jeu.
 }
 
@@ -154,7 +200,7 @@ func TrainingFight() {
 		}
 		// Code pour le combat avec le gobelin...
 
-		victoryAnimation() // Affichez l'animation de victoire
+		VictoryAnimation() // Affichez l'animation de victoire
 
 		// Continuez avec le reste du combat ou retournez au menu principal, selon votre logique de jeu.
 
@@ -165,10 +211,10 @@ func TrainingFight() {
 // ///////////////////////////////////////////////////////////////////////////////GROS GOBELIN///////////////////////////////////////////////
 func InitGoblin() Monstre {
 	gobelin := Monstre{
-		nom:       "Gobelin d'entraînement",
-		pvMax:     40,
-		pvActuels: 40, // Les points de vie actuels sont égaux aux points de vie maximum au début
-		attaque:   5,
+		Name:      "Gobelin d'entraînement",
+		MaxHealth: 40,
+		Health:    40, // Les points de vie actuels sont égaux aux points de vie maximum au début
+		Attack:    5,
 	}
 	return gobelin
 
@@ -451,9 +497,20 @@ func main() {
 	gobelin := InitGoblin()
 
 	// Affiche les caractéristiques du gobelin
-	fmt.Printf("Un %s apparaît !\n", gobelin.nom)
-	fmt.Printf("Points de vie : %d/%d\n", gobelin.pvActuels, gobelin.pvMax)
-	fmt.Printf("Points d'attaque : %d\n", gobelin.attaque)
+	fmt.Printf("Un %s apparaît !\n", gobelin.Name)
+	fmt.Printf("Points de vie : %d/%d\n", gobelin.Health, gobelin.MaxHealth)
+	fmt.Printf("Points d'attaque : %d\n", gobelin.Attack)
+
+	// Supposons que vous ayez déjà créé un joueur et un Gobelin avec InitGoblin
+	player := &Character{
+		Name:      "Personnage",
+		Health:    100,
+		MaxHealth: 100,
+		Attack:    15,
+	}
+
+	// Appel de la fonction goblinPattern
+	GoblinPattern(player, &gobelin)
 
 	map1 := map[string]int{"Potions de vie": 3}
 	p1.Init("Rayan", "Humain", 1, 100, 40, map1, 100, "Coup de poing", p1.equipment)
@@ -951,7 +1008,7 @@ func (p *Player) Managemoney(nb int) {
 	p.money += nb
 }
 
-func victoryAnimation() {
+func VictoryAnimation() {
 	// Vous pouvez utiliser des chaînes ASCII art pour créer votre animation.
 	animation := `
     __   __            _    _ _       
@@ -973,3 +1030,7 @@ func victoryAnimation() {
 ///////////////////////////////////////////////////////////FAIRE UN SAC A DOS POUR L INVENTAIRE EN ASCII
 
 ///////////////////////////////////////////////////////////FAIRE UN MARCHAND EN ASCII
+
+///////////////////////////////////////////////////////////FAIRE UN FORGERON EN ASCII
+
+///////////////////////////////////////////////////////////RAJOUTER DES ANIMATIONS LORS DU COMBATS
